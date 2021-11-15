@@ -1,0 +1,5 @@
+FastAPI
+SQLAlchemy
+tasklib
+uvicorn
+numpy
