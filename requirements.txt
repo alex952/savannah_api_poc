@@ -1,5 +1,7 @@
 FastAPI
 SQLAlchemy
-tasklib
 uvicorn
 numpy
+python-nubia
+termcolor
+requests
