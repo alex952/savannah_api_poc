@@ -33,19 +33,13 @@ async def quote(inputs: models.Quote_In):
     return scholes(inputs)
 
 @app.get("/quotes", response_model=List[models.Quote])
-async def saved_quotes():
-    quotes = schemas.QuoteSchema.get_all()
-    print(quotes)
-    print(quotes[0])
-    print(quotes[0].quote_lines)
-    print(len(quotes[0].quote_lines))
-    print(dict(quotes[0].quote_lines[0].__dict__))
+async def filter_quotes(filter_field: str = "", filter_value: str = ""):
+    quotes = schemas.QuoteSchema.filter(filter_field, filter_value)
     return quotes
-
 
 @app.post("/save_quote")
 async def save_quote(quote: models.Quote):
-    schemas.QuoteSchema.store(created_by='alex', quote_lines=[q.dict() for q in quote.quote_lines])
+    schemas.QuoteSchema.store(quote)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

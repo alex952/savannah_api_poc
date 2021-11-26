@@ -1,6 +1,7 @@
 import asyncio
 import socket
 import typing
+from datetime import date
 import json
 
 from termcolor import cprint
@@ -60,13 +61,14 @@ class Sucden:
             cprint("Price for {}: {}".format("Put", r_put.json()['price']))
 
 
-
     @command
-    def quotes(self):
+    @argument("filter_field")
+    @argument("filter_value")
+    def quotes(self, filter_field: str = "", filter_value: str = ""):
         """
         Get all quotes
         """
-        r = requests.get("http://localhost:8000/quotes")
+        r = requests.get("http://localhost:8000/quotes", params={'filter_field': filter_field, 'filter_value': filter_value})
         r_json = r.json()
 
         for q in r_json:
@@ -74,14 +76,17 @@ class Sucden:
 
     @command
     @argument("created_by")
+    @argument("underlying")
+    @argument("maturity")
+    @argument("strategy")
+    @argument("counterparty")
     @argument("side", choices=["Call", "Put"])
     @argument("basis")
     @argument("strike_price")
     @argument("vol")
     @argument("interest")
     @argument("dividend")
-    @argument("maturity")
-    def save_quote_one_line(self, created_by: str, basis: float, strike_price: float, interest: float, vol: float, maturity: float, side: str, dividend: float):
+    def save_quote_one_line(self, counterparty: str, maturity: str, underlying: str, strategy: str, created_by: str, basis: float, strike_price: float, interest: float, vol: float, side: str, dividend: float):
         """
         Store a quote
         """
@@ -95,7 +100,15 @@ class Sucden:
                 'maturity': maturity,
                 'dividend': dividend }
 
-        quote = {'created_by': created_by, 'quote_lines': [quote_line]}
+        quote = {
+                'created_by': created_by,
+                'underlying': underlying,
+                'counterparty': counterparty,
+                'strategy': strategy,
+                'maturity': maturity,
+                'created_by': created_by,
+                'quote_lines': [quote_line]
+                }
 
         resp = requests.post("http://localhost:8000/save_quote", data=json.dumps(quote))
 

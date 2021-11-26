@@ -28,7 +28,7 @@ class QuoteLineSchema(Base):
     vol           = db.Column(db.Float)
     interest      = db.Column(db.Float)
     dividend      = db.Column(db.Float)
-    maturity      = db.Column(db.Float)
+    maturity      = db.Column(db.Date)
 
     quote         = db.Column(db.Integer, db.ForeignKey('quote.quote_id'))
 
@@ -38,6 +38,10 @@ class QuoteSchema(Base):
     quote_id      = db.Column(db.Integer, primary_key=True)
     quote_lines   = relationship("QuoteLineSchema")
 
+    underlying    = db.Column(db.String)
+    maturity      = db.Column(db.Date)
+    strategy      = db.Column(db.String)
+    counterparty  = db.Column(db.String)
     created_by    = db.Column(db.String)
     created_at    = db.Column(db.DateTime, server_default=func.now())
 
@@ -47,16 +51,29 @@ class QuoteSchema(Base):
             return session.query(cls).options(joinedload(cls.quote_lines)).all()
 
     @classmethod
-    def store(cls, created_by="", quote_lines=[]):
+    def filter(cls, filter_field, filter_value):
+        with Session() as session:
+            if not filter_field:
+                return session.query(cls).options(joinedload(cls.quote_lines)).all()
+            else:
+                return session.query(cls).filter(getattr(cls, filter_field) == filter_value).options(joinedload(cls.quote_lines)).all()
+
+    @classmethod
+    def store(cls, quote):
         with Session() as session:
             lines = []
 
-            for q in quote_lines:
-                ql = QuoteLineSchema(**q)
+            for q in quote.quote_lines:
+                ql = QuoteLineSchema(**q.dict())
                 session.add(ql)
                 lines.append(ql)
 
-            obj = cls(created_by=created_by, quote_lines=lines)
+            obj = cls(maturity=quote.maturity,
+                      underlying=quote.underlying,
+                      strategy=quote.strategy,
+                      counterparty=quote.counterparty,
+                      created_by=quote.created_by,
+                      quote_lines=lines)
             session.add(obj)
 
             # I think it autocommits

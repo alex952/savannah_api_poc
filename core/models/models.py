@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
 
 from pydantic import BaseModel
 
@@ -16,7 +16,7 @@ class Quote_In(BaseModel):
     vol: float
     interest: float
     dividend: float
-    maturity: float
+    maturity: date
 
     class Config:
         orm_mode = True
@@ -34,6 +34,10 @@ class Quote_Out(BaseModel):
 class Quote(BaseModel):
     quote_lines: List[Quote_In]
 
+    underlying: str
+    maturity: date
+    strategy: str
+    counterparty: str
     created_by: str
     created_at: Optional[datetime]
 
