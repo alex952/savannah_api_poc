@@ -27,9 +27,9 @@ def cnd(d):
 
 
 def scholes(inputs: Quote_In):
-    S = inputs.spot_px
+    S = inputs.basis
     X = inputs.strike_price
-    T = inputs.t
+    T = inputs.maturity
     R = inputs.interest
     V = inputs.vol
     sqrtT = np.sqrt(T)

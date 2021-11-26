@@ -1,5 +1,6 @@
 FastAPI
 SQLAlchemy
+fastapi-sqlalchemy
 uvicorn
 numpy
 python-nubia

@@ -11,15 +11,16 @@ class SideEnum(str, Enum):
 
 class Quote_In(BaseModel):
     side: SideEnum
-    spot_px: float
+    basis: float
     strike_price: float
     vol: float
     interest: float
     dividend: float
-    t: float
+    maturity: float
 
     class Config:
         orm_mode = True
+
 
 class Quote_Out(BaseModel):
     price: float
@@ -29,5 +30,13 @@ class Quote_Out(BaseModel):
     vega: Optional[float]
     rho: Optional[float]
 
+
+class Quote(BaseModel):
+    quote_lines: List[Quote_In]
+
+    created_by: str
+    created_at: Optional[datetime]
+
     class Config:
         orm_mode = True
+
