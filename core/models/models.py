@@ -9,6 +9,28 @@ class SideEnum(str, Enum):
     Call = 'Call'
     Put = 'Put'
 
+class Underlying(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+class Maturity(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+
+
+# class Product:
+#     underlying: Underlying
+#     maturity: Maturity
+# 
+#     class Config:
+#         orm_mode = True
+
+
 class Quote_In(BaseModel):
     side: SideEnum
     basis: float
@@ -34,8 +56,7 @@ class Quote_Out(BaseModel):
 class Quote(BaseModel):
     quote_lines: List[Quote_In]
 
-    underlying: str
-    maturity: date
+    product: Product
     strategy: str
     counterparty: str
     created_by: str
@@ -43,4 +64,14 @@ class Quote(BaseModel):
 
     class Config:
         orm_mode = True
+
+class VolCurvePoint_IN(BaseModel):
+    product: Product
+    vol_curve_date: date
+    vol_curve_source: str
+    vol_type: str
+
+
+# class VolCurvePoint(VolCurvePoint_IN):
+#     value
 

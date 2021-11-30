@@ -12,8 +12,6 @@ from core.calcs.scholes import scholes
 import core.models.models as models
 import core.schemas.schemas as schemas
 
-import logging as logger
-
 app = FastAPI()
 
 @app.exception_handler(RequestValidationError)
@@ -27,6 +25,17 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 async def root():
     return {'message': 'Hello World!'}
 
+@app.get("/underlyings", response_model=models.Underlying)
+async def get_underlyings():
+    return schemas.UnderlyingSchema.get_all()
+
+@app.get("/maturities", response_model=models.Maturity)
+async def get_maturities():
+    return schemas.MaturitySchema.get_all()
+
+# @app.get("/details", response_model=models.ProductDetails)
+# async def get_product_details():
+#     return schemas.MaturitySchema.get_all()
 
 @app.post("/quote", response_model=models.Quote_Out)
 async def quote(inputs: models.Quote_In):
@@ -40,6 +49,11 @@ async def filter_quotes(filter_field: str = "", filter_value: str = ""):
 @app.post("/save_quote")
 async def save_quote(quote: models.Quote):
     schemas.QuoteSchema.store(quote)
+
+# @app.get("/vol_curve")
+# async def vol_curve(t: date, underlying: str, maturity: date, type: str, source: str = "LME"):
+#     return schemas.VolCurve.get(underlying, maturity, type, t, source)
+# 
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
