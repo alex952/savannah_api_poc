@@ -5,7 +5,7 @@ from datetime import datetime, date
 
 from pydantic import BaseModel
 
-class SideEnum(str, Enum):
+class CallOrPutEnum(str, Enum):
     Call = 'Call'
     Put = 'Put'
 
@@ -19,26 +19,35 @@ class Underlying(BaseModel):
 class Maturity(BaseModel):
     name: str
 
+    expiry: date
+    prompt: date
+
     class Config:
         orm_mode = True
 
 
-# class Product:
-#     underlying: Underlying
-#     maturity: Maturity
-# 
-#     class Config:
-#         orm_mode = True
+class Product:
+    underlying: Underlying
+    maturity: Maturity
+
+    class Config:
+        orm_mode = True
+
+
+class ProductDetails:
+    product: Product
+
+    basis: float
+    forward_price: float
+    interest: float
+    vol: float
+    div: float
 
 
 class Quote_In(BaseModel):
-    side: SideEnum
-    basis: float
+    product: Product
+    call_or_put: CallOrPutEnum
     strike_price: float
-    vol: float
-    interest: float
-    dividend: float
-    maturity: date
 
     class Config:
         orm_mode = True
@@ -46,11 +55,17 @@ class Quote_In(BaseModel):
 
 class Quote_Out(BaseModel):
     price: float
-    delta: Optional[float]
-    gamma: Optional[float]
-    theta: Optional[float]
-    vega: Optional[float]
-    rho: Optional[float]
+    vol: Optional[float]
+
+    greeks: Optional[Greeks]
+
+
+class Greeks(BaseModel):
+    delta: float
+    gamma: float
+    theta: float
+    vega: float
+    rho: float
 
 
 class Quote(BaseModel):
@@ -65,11 +80,17 @@ class Quote(BaseModel):
     class Config:
         orm_mode = True
 
-class VolCurvePoint_IN(BaseModel):
-    product: Product
-    vol_curve_date: date
-    vol_curve_source: str
-    vol_type: str
+
+class PortfolioItem(BaseModel):
+    underlying: Underlying
+    greeks: Greeks
+
+
+# class VolCurvePoint_IN(BaseModel):
+#     product: Product
+#     vol_curve_date: date
+#     vol_curve_source: str
+#     vol_type: str
 
 
 # class VolCurvePoint(VolCurvePoint_IN):

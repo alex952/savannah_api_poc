@@ -35,7 +35,7 @@ async def get_maturities():
 
 # @app.get("/details", response_model=models.ProductDetails)
 # async def get_product_details():
-#     return schemas.MaturitySchema.get_all()
+#     return schemas.ProductDetails.get_all()
 
 @app.post("/quote", response_model=models.Quote_Out)
 async def quote(inputs: models.Quote_In):
@@ -49,6 +49,10 @@ async def filter_quotes(filter_field: str = "", filter_value: str = ""):
 @app.post("/save_quote")
 async def save_quote(quote: models.Quote):
     schemas.QuoteSchema.store(quote)
+
+@app.post("/portfolio", response_model=List[models.PortfolioItem])
+async def portfolio():
+    pass
 
 # @app.get("/vol_curve")
 # async def vol_curve(t: date, underlying: str, maturity: date, type: str, source: str = "LME"):
