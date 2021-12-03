@@ -26,7 +26,7 @@ class Maturity(BaseModel):
         orm_mode = True
 
 
-class Product:
+class Product(BaseModel):
     underlying: Underlying
     maturity: Maturity
 
@@ -34,9 +34,11 @@ class Product:
         orm_mode = True
 
 
-class ProductDetails:
+class ProductDetails(BaseModel):
     product: Product
 
+    expiry: date
+    prompt: date
     basis: float
     forward_price: float
     interest: float
@@ -44,7 +46,7 @@ class ProductDetails:
     div: float
 
 
-class Quote_In(BaseModel):
+class QuoteLine_IN(BaseModel):
     product: Product
     call_or_put: CallOrPutEnum
     strike_price: float
@@ -53,7 +55,7 @@ class Quote_In(BaseModel):
         orm_mode = True
 
 
-class Quote_Out(BaseModel):
+class QuoteLine_OUT(BaseModel):
     price: float
     vol: Optional[float]
 
@@ -67,9 +69,12 @@ class Greeks(BaseModel):
     vega: float
     rho: float
 
+class QuoteStructureLine(BaseModel):
+    quote_in: QuoteLine_IN
+    quote_out: QuoteLine_OUT
 
 class Quote(BaseModel):
-    quote_lines: List[Quote_In]
+    quote_lines: List[QuoteStructureLine]
 
     product: Product
     strategy: str
@@ -86,13 +91,13 @@ class PortfolioItem(BaseModel):
     greeks: Greeks
 
 
-# class VolCurvePoint_IN(BaseModel):
-#     product: Product
-#     vol_curve_date: date
-#     vol_curve_source: str
-#     vol_type: str
+class VolCurvePoint_IN(BaseModel):
+    product: Product
+    vol_curve_date: date
+    vol_curve_source: str
+    vol_type: str
 
 
-# class VolCurvePoint(VolCurvePoint_IN):
-#     value
+class VolCurvePoint(VolCurvePoint_IN):
+    value: List[float]
 

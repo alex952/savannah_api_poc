@@ -2,7 +2,7 @@ from __future__ import print_function
 
 import numpy as np
 
-from core.models.models import Quote_In, Quote_Out, SideEnum
+from core.models.models import QuoteLine_IN, QuoteLine_OUT, SideEnum
 
 
 def cnd(d):
@@ -26,7 +26,7 @@ def cnd(d):
     # return ret_val
 
 
-def scholes(inputs: Quote_In):
+def scholes(inputs: QuoteLine_IN):
     S = inputs.basis
     X = inputs.strike_price
     T = inputs.maturity
@@ -47,7 +47,7 @@ def scholes(inputs: Quote_In):
         #Put result
         res = X * expRT * (1.0 - cndd2) - S * (1.0 - cndd1)
 
-    return Quote_Out(price=res)
+    return QuoteLine_OUT(price=res)
 
 # Sample data
 # def scholes(inputs: Quote_In):
